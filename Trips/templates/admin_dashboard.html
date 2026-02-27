@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Control Panel | Sacred Journeys</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --royal-gold: #b8860b;
+        --ivory: #fcfbf7;
+        --accent-gold: #d4af37;
+      }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        background-color: var(--ivory);
+        color: #333;
+        scroll-behavior: smooth;
+      }
+
+      /* Top Navigation */
+      .admin-nav {
+        background: #fff;
+        border-bottom: 3px solid var(--accent-gold);
+        padding: 15px 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      .nav-link {
+        color: #666;
+        font-weight: 600;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: 0.3s;
+      }
+
+      .nav-link:hover {
+        color: var(--royal-gold);
+      }
+
+      /* Header */
+      .admin-hero {
+        background: white;
+        padding: 50px 0;
+        margin-bottom: 40px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+      }
+
+      .admin-hero h1 {
+        font-family: "Playfair Display", serif;
+        font-size: 2.5rem;
+        color: #222;
+        margin-bottom: 10px;
+      }
+
+      /* Section Cards */
+      .admin-section {
+        background: white;
+        border-radius: 0;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+        margin-bottom: 60px;
+        padding: 40px;
+      }
+
+      .section-title {
+        font-family: "Playfair Display", serif;
+        color: var(--royal-gold);
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--ivory);
+        padding-bottom: 15px;
+      }
+
+      /* Data Rows */
+      .data-row {
+        padding: 18px 0;
+        border-bottom: 1px solid #f8f8f8;
+        transition: 0.2s;
+      }
+
+      .data-row:hover {
+        background-color: #fdfdfd;
+      }
+
+      .label-sm {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        color: #aaa;
+        letter-spacing: 1px;
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      /* Buttons & Badges */
+      .btn-gold {
+        background: var(--royal-gold);
+        color: white;
+        border-radius: 0;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 8px 18px;
+        text-transform: uppercase;
+        border: none;
+      }
+
+      .btn-gold:hover {
+        background: #966d09;
+        color: white;
+      }
+
+      .action-link {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-decoration: none;
+        margin-left: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-status {
+        font-size: 0.6rem;
+        padding: 5px 10px;
+        border-radius: 0;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="admin-nav sticky-top">
+      <div class="container d-flex justify-content-between align-items-center">
+        <a
+          href="{% url 'admin_dashboard' %}"
+          class="text-decoration-none text-dark fw-bold fs-4"
+          style="font-family: &quot;Playfair Display&quot;"
+          >ADMIN <span style="color: var(--royal-gold)">PORTAL</span></a
+        >
+        <div class="d-flex gap-4">
+          <a href="#users" class="nav-link">Users</a>
+          <a href="#organizers" class="nav-link">Organizers</a>
+          <a href="#trips" class="nav-link">Trips</a>
+          <a href="#bookings" class="nav-link">Bookings</a>
+          <a href="#reviews" class="nav-link">Reviews</a>
+          <a href="{% url 'trip_list' %}" class="nav-link border-start ps-4"
+            >View Site</a
+          >
+          <a href="{% url 'logout' %}" class="nav-link text-danger">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="admin-hero">
+      <div class="container">
+        <h1>Sanctuary Management</h1>
+        <p class="text-muted small text-uppercase" style="letter-spacing: 3px">
+          System Administrator Overview
+        </p>
+      </div>
+    </header>
+
+    <div class="container">
+      {% if messages %} {% for message in messages %}
+      <div class="alert alert-success rounded-0 border-0 shadow-sm mb-5 small">
+        {{ message }}
+      </div>
+      {% endfor %} {% endif %}
+
+      <section id="users" class="admin-section">
+        <div class="section-title">
+          <h2>Pilgrims & Users ({{ users.count }})</h2>
+          <a href="{% url 'register' %}" class="btn btn-gold">+ Add New User</a>
+        </div>
+        {% for user in users %}
+        <div class="data-row row align-items-center">
+          <div class="col-md-3">
+            <span class="label-sm">Username</span>
+            <span class="fw-bold">{{ user.username }}</span>
+          </div>
+          <div class="col-md-5">
+            <span class="label-sm">Email Address</span>
+            <span>{{ user.email }}</span>
+          </div>
+          <div class="col-md-4 text-end">
+            {% if not user.is_superuser %}
+            <a
+              href="{% url 'edit_user' user.id %}"
+              class="action-link text-primary"
+              >Edit</a
+            >
+            <a
+              href="{% url 'delete_user' user.id %}"
+              class="action-link text-danger"
+              onclick="return confirm('Permanently delete this user?');"
+              >Delete</a
+            >
+            {% else %}
+            <span class="badge bg-dark badge-status">Superuser</span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </section>
+
+      <section id="organizers" class="admin-section">
+        <div class="section-title">
+          <h2>Trip Organizers ({{ organizers.count }})</h2>
+          <a href="{% url 'register_organizer_admin' %}" class="btn btn-gold"
+            >+ New Organizer</a
+          >
+        </div>
+        {% for org in organizers %}
+        <div class="data-row row align-items-center">
+          <div class="col-md-3">
+            <span class="label-sm">Organization</span>
+            <span class="fw-bold text-uppercase">{{ org.company }}</span>
+          </div>
+          <div class="col-md-3">
+            <span class="label-sm">Verification Status</span>
+            {% if org.is_verified %}
+            <span class="text-success small fw-bold">✓ VERIFIED</span>
+            {% else %}
+            <span class="text-warning small fw-bold">PENDING VERIFICATION</span>
+            {% endif %}
+          </div>
+          <div class="col-md-6 text-end">
+            {% if not org.is_verified %}
+            <a
+              href="{% url 'verify_organizer' org.id %}"
+              class="action-link text-success"
+              >Verify Now</a
+            >
+            {% endif %}
+            <a
+              href="{% url 'edit_organizer' org.id %}"
+              class="action-link text-primary"
+              >Edit</a
+            >
+            <a
+              href="{% url 'delete_organizer' org.id %}"
+              class="action-link text-danger"
+              onclick="return confirm('Delete this organizer?');"
+              >Delete</a
+            >
+          </div>
+        </div>
+        {% endfor %}
+      </section>
+
+      <section id="trips" class="admin-section">
+        <div class="section-title">
+          <h2>Journey Inventory ({{ trips.count }})</h2>
+          <a href="{% url 'create_trip_admin' %}" class="btn btn-gold"
+            >+ Create Trip</a
+          >
+        </div>
+        {% for trip in trips %}
+        <div class="data-row row align-items-center">
+          <div class="col-md-3">
+            <span class="label-sm">Journey Title</span>
+            <span class="fw-bold">{{ trip.title }}</span>
+          </div>
+          <div class="col-md-2 text-center">
+            <span class="label-sm">Offering</span>
+            <span class="text-success fw-bold">${{ trip.price }}</span>
+          </div>
+          <div class="col-md-2 text-center">
+            <span class="label-sm">Status</span>
+            <span class="badge bg-light text-dark badge-status"
+              >{{ trip.status }}</span
+            >
+          </div>
+          <div class="col-md-5 text-end">
+            {% if trip.status == 'Pending' %}
+            <a
+              href="{% url 'approve_trip' trip.id %}"
+              class="action-link text-success"
+              >Approve</a
+            >
+            <a
+              href="{% url 'reject_trip' trip.id %}"
+              class="action-link text-warning"
+              >Reject</a
+            >
+            {% endif %}
+            <a
+              href="{% url 'edit_trip_admin' trip.id %}"
+              class="action-link text-primary"
+              >Edit</a
+            >
+            <a
+              href="{% url 'delete_trip_admin' trip.id %}"
+              class="action-link text-danger"
+              onclick="return confirm('Delete trip?');"
+              >Delete</a
+            >
+          </div>
+        </div>
+        {% endfor %}
+      </section>
+
+      <section id="bookings" class="admin-section">
+        <div class="section-title">
+          <h2>Active Bookings ({{ bookings.count }})</h2>
+          <a href="{% url 'create_booking_admin' %}" class="btn btn-gold"
+            >+ New Booking</a
+          >
+        </div>
+        {% for booking in bookings %}
+        <div class="data-row row align-items-center">
+          <div class="col-md-4">
+            <span class="label-sm">Pilgrim Name</span>
+            <span class="fw-bold">{{ booking.user.username }}</span>
+          </div>
+          <div class="col-md-4">
+            <span class="label-sm">Scheduled Journey</span>
+            <span>{{ booking.trip.title }}</span>
+          </div>
+          <div class="col-md-4 text-end">
+            <span class="badge bg-light text-dark me-3 badge-status"
+              >{{ booking.status }}</span
+            >
+            <a
+              href="{% url 'update_booking_status' booking.id %}"
+              class="action-link text-success"
+              >Status</a
+            >
+            <a
+              href="{% url 'edit_booking' booking.id %}"
+              class="action-link text-primary"
+              >Edit</a
+            >
+            <a
+              href="{% url 'delete_booking' booking.id %}"
+              class="action-link text-danger"
+              >Delete</a
+            >
+          </div>
+        </div>
+        {% endfor %}
+      </section>
+
+      <section id="reviews" class="admin-section">
+        <div class="section-title">
+          <h2>Pilgrim Reviews ({{ reviews.count }})</h2>
+          <a href="{% url 'create_review_admin' %}" class="btn btn-gold"
+            >+ Add Review</a
+          >
+        </div>
+        {% for review in reviews %}
+        <div class="data-row row align-items-center">
+          <div class="col-md-3">
+            <span class="label-sm">Pilgrim</span>
+            <span class="fw-bold">{{ review.user.username }}</span>
+          </div>
+          <div class="col-md-5">
+            <span class="label-sm">Comment Snippet</span>
+            <span class="text-muted small"
+              >"{{ review.comment|truncatechars:60 }}"</span
+            >
+          </div>
+          <div class="col-md-4 text-end">
+            <span class="me-3 small fw-bold text-warning"
+              >{{ review.rating }}/5 ★</span
+            >
+            <a
+              href="{% url 'edit_review' review.id %}"
+              class="action-link text-primary"
+              >Edit</a
+            >
+            <a
+              href="{% url 'delete_review' review.id %}"
+              class="action-link text-danger"
+              >Delete</a
+            >
+          </div>
+        </div>
+        {% endfor %}
+      </section>
+    </div>
+
+    <footer class="text-center py-5">
+      <p class="small text-muted text-uppercase" style="letter-spacing: 2px">
+        © 2026 Admin Command | Sacred Journeys Management
+      </p>
+    </footer>
+  </body>
+</html>

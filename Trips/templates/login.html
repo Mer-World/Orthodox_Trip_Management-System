@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login | Sacred Journeys</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --royal-gold: #b8860b;
+        --ivory: #fcfbf7;
+        --accent-gold: #d4af37;
+      }
+
+      body {
+        font-family: "Lato", sans-serif;
+        background: var(--ivory);
+        background-image:
+          linear-gradient(rgba(252, 251, 247, 0.8), rgba(252, 251, 247, 0.8)),
+          url("https://www.transparenttextures.com/patterns/cream-paper.png");
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+      }
+
+      /* Centered Login Card */
+      .login-card {
+        background: #ffffff;
+        width: 100%;
+        max-width: 400px;
+        padding: 50px 40px;
+        border-top: 6px solid var(--royal-gold);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        position: relative;
+      }
+
+      .login-card::before {
+        content: "✞"; /* Small decorative Orthodox cross */
+        display: block;
+        color: var(--accent-gold);
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
+
+      .login-title {
+        font-family: "Playfair Display", serif;
+        font-size: 2.2rem;
+        color: #222;
+        margin-bottom: 30px;
+      }
+
+      .form-control {
+        border: none;
+        border-bottom: 1px solid #eee;
+        border-radius: 0;
+        padding: 12px 5px;
+        margin-bottom: 25px;
+        font-size: 0.95rem;
+        transition: 0.3s;
+      }
+
+      .form-control:focus {
+        box-shadow: none;
+        border-bottom: 1px solid var(--royal-gold);
+        background: transparent;
+      }
+
+      .btn-login {
+        background: var(--royal-gold);
+        color: white;
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 0;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        transition: 0.4s;
+        margin-top: 10px;
+      }
+
+      .btn-login:hover {
+        background: #966d09;
+        box-shadow: 0 5px 15px rgba(184, 134, 11, 0.2);
+        color: white;
+      }
+
+      .back-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        color: #999;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: 0.3s;
+      }
+
+      .back-link:hover {
+        color: var(--royal-gold);
+      }
+
+      .register-footer {
+        margin-top: 30px;
+        font-size: 0.9rem;
+        color: #777;
+      }
+
+      .register-footer a {
+        color: #222;
+        font-weight: 700;
+        text-decoration: none;
+        border-bottom: 1px solid var(--accent-gold);
+      }
+
+      /* Error Messages */
+      .alert-error {
+        background: #fff5f5;
+        color: #c0392b;
+        font-size: 0.85rem;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-left: 3px solid #c0392b;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-card">
+      <a href="{% url 'trip_list' %}" class="back-link">← Return to Trips</a>
+
+      <h2 class="login-title">Welcome Back</h2>
+
+      {% if messages %} {% for message in messages %}
+      <div class="alert-error">{{ message }}</div>
+      {% endfor %} {% endif %}
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <input
+          type="text"
+          name="username"
+          class="form-control"
+          placeholder="Username"
+          required
+        />
+
+        <input
+          type="password"
+          name="password"
+          class="form-control"
+          placeholder="Password"
+          required
+        />
+
+        <button type="submit" class="btn btn-login">Sign In</button>
+      </form>
+
+      <div class="register-footer">
+        <p>
+          New to the system? <a href="{% url 'register' %}">Create Account</a>
+        </p>
+        {% if user.is_authenticated %}
+        <hr />
+        <a
+          href="{% url 'logout' %}"
+          style="border: none; color: #999; font-weight: 400; font-size: 0.8rem"
+          >Logout Current Session</a
+        >
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

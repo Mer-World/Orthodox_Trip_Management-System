@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Update Booking Status</title>
+  </head>
+  <body>
+    <h2>Update Booking Status</h2>
+
+    <a href="{% url 'admin_dashboard' %}">← Back to Dashboard</a>
+
+    <hr />
+
+    <p><strong>Customer:</strong> {{ booking.user.username }}</p>
+    <p><strong>Trip:</strong> {{ booking.trip.title }}</p>
+    <p><strong>Current Status:</strong> {{ booking.status }}</p>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <label>New Status:</label><br />
+      <select name="status">
+        <option value="Pending">Pending</option>
+        <option value="Confirmed">Confirmed</option>
+        <option value="Completed">Completed</option>
+        <option value="Canceled">Canceled</option>
+      </select>
+      <br /><br />
+
+      <button type="submit">Update</button>
+    </form>
+  </body>
+</html>

@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Journey | Admin Control</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --royal-gold: #b8860b;
+        --ivory: #fcfbf7;
+        --dark-slate: #1a1a1a;
+        --soft-gray: #fafafa;
+      }
+
+      body {
+        background-color: var(--ivory);
+        padding: 60px 0;
+        font-family: "Montserrat", sans-serif;
+        color: var(--dark-slate);
+      }
+
+      .container {
+        max-width: 800px;
+      }
+
+      .form-card {
+        background: white;
+        padding: 50px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+        border-top: 6px solid var(--royal-gold);
+      }
+
+      .header-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        color: var(--royal-gold);
+        font-weight: 700;
+        display: block;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      h2 {
+        font-family: "Playfair Display", serif;
+        text-align: center;
+        font-size: 2.2rem;
+        margin-bottom: 40px;
+        color: var(--dark-slate);
+      }
+
+      .form-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #999;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .current-tag {
+        font-size: 0.6rem;
+        color: var(--royal-gold);
+        background: #fff9e6;
+        padding: 2px 8px;
+        text-transform: none;
+      }
+
+      .form-control,
+      select,
+      textarea {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid #eee;
+        border-radius: 0;
+        font-size: 0.95rem;
+        background-color: var(--soft-gray);
+        transition: 0.3s;
+        margin-bottom: 25px;
+      }
+
+      .form-control:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--royal-gold);
+        background-color: white;
+        outline: none;
+        box-shadow: none;
+      }
+
+      textarea {
+        min-height: 140px;
+        resize: vertical;
+      }
+
+      /* Status Radio Buttons */
+      .status-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 30px;
+      }
+
+      .status-box {
+        position: relative;
+      }
+
+      .status-box input {
+        display: none;
+      }
+
+      .status-box label {
+        display: block;
+        background: var(--soft-gray);
+        border: 1px solid #eee;
+        padding: 12px;
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .status-box input:checked + label {
+        background: var(--dark-slate);
+        color: white;
+        border-color: var(--dark-slate);
+      }
+
+      .btn-update {
+        background-color: var(--dark-slate);
+        color: white;
+        padding: 18px;
+        border: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 0.85rem;
+        width: 100%;
+        transition: 0.3s;
+        margin-top: 20px;
+      }
+
+      .btn-update:hover {
+        background-color: var(--royal-gold);
+        transform: translateY(-2px);
+      }
+
+      .btn-back {
+        display: block;
+        text-align: center;
+        margin-top: 30px;
+        color: #bbb;
+        text-decoration: none;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .alert {
+        border-radius: 0;
+        border: none;
+        border-left: 4px solid var(--royal-gold);
+        font-size: 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="form-card">
+        <span class="header-label">Inventory Management</span>
+        <h2>Modify Journey</h2>
+
+        {% if messages %}
+        <div class="messages mb-4">
+          {% for message in messages %}
+          <div
+            class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show"
+            role="alert"
+          >
+            {{ message }}
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+          {% csrf_token %}
+
+          <label class="form-label">Journey Title</label>
+          <input
+            type="text"
+            name="title"
+            class="form-control"
+            value="{{ trip.title }}"
+            required
+          />
+
+          <label class="form-label">Detailed Description</label>
+          <textarea name="description" class="form-control" required>
+{{ trip.description }}</textarea
+          >
+
+          <label class="form-label">Destination</label>
+          <input
+            type="text"
+            name="destination"
+            class="form-control"
+            value="{{ trip.destination }}"
+            required
+          />
+
+          <div class="row gx-3">
+            <div class="col-md-6">
+              <label class="form-label">Departure Date</label>
+              <input
+                type="datetime-local"
+                name="departure_date"
+                class="form-control"
+                value="{{ trip.departure_date|date:'Y-m-d\TH:i' }}"
+                required
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Return Date</label>
+              <input
+                type="datetime-local"
+                name="return_date"
+                class="form-control"
+                value="{{ trip.return_date|date:'Y-m-d\TH:i' }}"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="row gx-3">
+            <div class="col-md-6">
+              <label class="form-label">Price (ETB)</label>
+              <input
+                type="number"
+                name="price"
+                class="form-control"
+                value="{{ trip.price }}"
+                required
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">
+                Organizer
+                <span class="current-tag"
+                  >Org: {{ trip.created_by.user.username }}</span
+                >
+              </label>
+              <select name="organizer" class="form-control" required>
+                {% for org in organizers %}
+                <option
+                  value="{{ org.id }}"
+                  {%
+                  if
+                  org.id=""
+                  ="trip.created_by.id"
+                  %}selected{%
+                  endif
+                  %}
+                >
+                  {{ org.user.username }} | {{ org.company }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <label class="form-label">Journey Status</label>
+          <div class="status-container">
+            <div class="status-box">
+              <input
+                type="radio"
+                name="status"
+                id="s1"
+                value="Pending"
+                {%
+                if
+                trip.status=""
+                ="Pending"
+                %}checked{%
+                endif
+                %}
+              />
+              <label for="s1">Pending</label>
+            </div>
+            <div class="status-box">
+              <input
+                type="radio"
+                name="status"
+                id="s2"
+                value="Approved"
+                {%
+                if
+                trip.status=""
+                ="Approved"
+                %}checked{%
+                endif
+                %}
+              />
+              <label for="s2">Approved</label>
+            </div>
+            <div class="status-box">
+              <input
+                type="radio"
+                name="status"
+                id="s3"
+                value="Completed"
+                {%
+                if
+                trip.status=""
+                ="Completed"
+                %}checked{%
+                endif
+                %}
+              />
+              <label for="s3">Completed</label>
+            </div>
+            <div class="status-box">
+              <input
+                type="radio"
+                name="status"
+                id="s4"
+                value="Cancelled"
+                {%
+                if
+                trip.status=""
+                ="Cancelled"
+                %}checked{%
+                endif
+                %}
+              />
+              <label for="s4">Cancelled</label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-update">Commit Updates</button>
+        </form>
+
+        <a href="{% url 'admin_dashboard' %}" class="btn-back">
+          ← Return to Logistics Center
+        </a>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

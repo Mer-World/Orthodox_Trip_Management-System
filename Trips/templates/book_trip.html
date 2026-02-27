@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirm Booking | Sacred Journeys</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --royal-gold: #b8860b;
+        --ivory: #fcfbf7;
+      }
+
+      body {
+        background-color: var(--ivory);
+        font-family: "Montserrat", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 0;
+      }
+
+      .booking-card {
+        background: white;
+        max-width: 600px;
+        width: 90%;
+        padding: 60px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+        border: 1px solid #eee;
+        position: relative;
+      }
+
+      /* Ornamental Top Border */
+      .booking-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 8px;
+        background: var(--royal-gold);
+      }
+
+      .back-link {
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        font-weight: 700;
+        color: #bbb;
+        text-decoration: none;
+        transition: 0.3s;
+        display: inline-block;
+        margin-bottom: 40px;
+      }
+
+      .back-link:hover {
+        color: var(--royal-gold);
+      }
+
+      .section-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        color: var(--royal-gold);
+        font-weight: 700;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      .trip-name {
+        font-family: "Playfair Display", serif;
+        font-size: 2.5rem;
+        color: #1a1a1a;
+        margin-bottom: 30px;
+        line-height: 1.2;
+      }
+
+      .details-grid {
+        border-top: 1px solid #f2f2f2;
+        border-bottom: 1px solid #f2f2f2;
+        padding: 30px 0;
+        margin-bottom: 40px;
+      }
+
+      .detail-item {
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .detail-label {
+        font-weight: 400;
+        color: #888;
+        font-size: 0.9rem;
+      }
+
+      .detail-value {
+        font-weight: 600;
+        color: #222;
+        font-size: 0.9rem;
+      }
+
+      .price-highlight {
+        font-size: 1.4rem;
+        color: var(--royal-gold);
+        font-weight: 700;
+      }
+
+      .btn-confirm {
+        background: #111;
+        color: white;
+        border: none;
+        padding: 18px;
+        width: 100%;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-size: 0.8rem;
+        transition: 0.4s;
+        cursor: pointer;
+      }
+
+      .btn-confirm:hover {
+        background: var(--royal-gold);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(184, 134, 11, 0.2);
+      }
+
+      .disclaimer {
+        margin-top: 25px;
+        font-size: 0.7rem;
+        color: #aaa;
+        text-align: center;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="booking-card">
+      <a href="{% url 'trip_detail' trip.id %}" class="back-link"
+        >← Cancel & Back</a
+      >
+
+      <span class="section-label">Final Confirmation</span>
+      <h2 class="trip-name">{{ trip.title }}</h2>
+
+      <div class="details-grid">
+        <div class="detail-item">
+          <span class="detail-label">Pilgrimage Destination</span>
+          <span class="detail-value">{{ trip.destination }}</span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">Departure Date</span>
+          <span class="detail-value">{{ trip.departure_date }}</span>
+        </div>
+
+        <div class="detail-item mt-3">
+          <span class="detail-label">Total Investment</span>
+          <span class="detail-value price-highlight">{{ trip.price }} ETB</span>
+        </div>
+      </div>
+
+      <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn-confirm">Secure My Place</button>
+      </form>
+
+      <p class="disclaimer">
+        By confirming, you agree to the terms of the sacred pilgrimage. <br />
+        A confirmation email will be sent to your registered address.
+      </p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Partner Dashboard | Sacred Journeys</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --royal-gold: #b8860b;
+        --ivory: #fcfbf7;
+        --accent-gold: #d4af37;
+        --soft-white: #ffffff;
+      }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        background: var(--ivory);
+        color: #333;
+      }
+
+      /* Top Header Navigation */
+      .org-nav {
+        background: #fff;
+        padding: 15px 0;
+        border-bottom: 3px solid var(--accent-gold);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Business Profile Banner */
+      .profile-banner {
+        background: white;
+        padding: 40px 0;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 40px;
+      }
+
+      .status-pill {
+        padding: 6px 15px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 0;
+      }
+
+      /* Action Cards */
+      .dashboard-card {
+        background: var(--soft-white);
+        border: none;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+      }
+
+      .section-title {
+        font-family: "Playfair Display", serif;
+        color: var(--royal-gold);
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      /* Trip & Booking Items */
+      .item-row {
+        padding: 20px;
+        background: #fafafa;
+        border-left: 4px solid var(--accent-gold);
+        margin-bottom: 15px;
+        transition: 0.3s;
+      }
+
+      .item-row:hover {
+        background: #fff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      .btn-gold {
+        background: var(--royal-gold);
+        color: white;
+        border-radius: 0;
+        padding: 10px 25px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.8rem;
+        border: none;
+      }
+
+      .btn-gold:hover {
+        background: #966d09;
+        color: white;
+      }
+
+      .action-link {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-decoration: none;
+        text-transform: uppercase;
+        margin-left: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="org-nav">
+      <div class="container d-flex justify-content-between align-items-center">
+        <span
+          class="fw-bold"
+          style="font-family: &quot;Playfair Display&quot;; font-size: 1.2rem"
+          >PARTNER <span style="color: var(--royal-gold)">PORTAL</span></span
+        >
+        <div>
+          <a
+            href="{% url 'trip_list' %}"
+            class="text-dark text-decoration-none me-4 small fw-bold"
+            >VIEW SITE</a
+          >
+          <a
+            href="{% url 'logout' %}"
+            class="text-muted text-decoration-none small"
+            >LOGOUT</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <header class="profile-banner">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h2 style="font-family: &quot;Playfair Display&quot;">
+              {{ profile.company|default:user.username }}
+            </h2>
+            <p class="text-muted mb-0">Partner Management Dashboard</p>
+          </div>
+          <div class="col-md-4 text-md-end">
+            {% if profile.is_verified %}
+            <span class="status-pill bg-success text-white"
+              >✓ Verified Partner</span
+            >
+            {% else %}
+            <span class="status-pill bg-warning text-dark"
+              >⚠ Pending Verification</span
+            >
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      {% if messages %} {% for message in messages %}
+      <div class="alert alert-success rounded-0 border-0 mb-4 small">
+        {{ message }}
+      </div>
+      {% endfor %} {% endif %}
+
+      <div class="row">
+        <div class="col-lg-7">
+          <div class="dashboard-card">
+            <div class="section-title">
+              <h3 class="mb-0">My Journeys</h3>
+              <a href="{% url 'create_trip' %}" class="btn btn-gold"
+                >+ New Trip</a
+              >
+            </div>
+
+            {% for trip in trips %}
+            <div class="item-row">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <h5 class="fw-bold mb-1">{{ trip.title }}</h5>
+                  <p class="small text-muted mb-2">
+                    📍 {{ trip.destination }} | Offering: ${{ trip.price }}
+                  </p>
+                  <span
+                    class="badge bg-light text-dark text-uppercase"
+                    style="font-size: 0.6rem"
+                    >Status: {{ trip.status }}</span
+                  >
+                </div>
+                <div>
+                  <a
+                    href="{% url 'edit_trip' trip.id %}"
+                    class="action-link text-primary"
+                    >Edit</a
+                  >
+                  <a
+                    href="{% url 'delete_trip' trip.id %}"
+                    class="action-link text-danger"
+                    onclick="return confirm('Archive this trip?');"
+                    >Delete</a
+                  >
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-4 border border-dashed">
+              <p class="text-muted mb-0">
+                You haven't listed any journeys yet.
+              </p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="dashboard-card">
+            <div class="section-title">
+              <h3 class="mb-0">New Bookings</h3>
+            </div>
+
+            {% for booking in bookings %}
+            <div class="item-row" style="border-left-color: #2e7d32">
+              <p class="mb-1"><strong>{{ booking.user.username }}</strong></p>
+              <p class="small text-muted mb-2">
+                Joined: {{ booking.trip.title }}
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <span
+                  class="small fw-bold text-uppercase"
+                  style="color: #2e7d32"
+                  >{{ booking.status }}</span
+                >
+                <span class="text-muted small"
+                  >{{ booking.booking_date|date:"M d, Y" }}</span
+                >
+              </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-4">
+              <p class="text-muted small">
+                No pilgrims have joined your trips yet.
+              </p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="text-center py-5">
+      <p class="small text-muted">© 2026 Sacred Journeys Partner Network</p>
+    </footer>
+  </body>
+</html>
